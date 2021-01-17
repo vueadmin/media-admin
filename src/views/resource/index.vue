@@ -53,7 +53,7 @@
       </el-table-column>
       <el-table-column
         label="资源链接"
-        width="350"
+        width="450"
       >
         <template slot-scope="scope">
           {{ scope.row.url }}
@@ -68,9 +68,9 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="100">
+        width="120">
         <template slot-scope="scope">
-          <el-button @click="handleFetchResourcesQrcode(scope.row)" type="text" size="small">查看</el-button>
+          <el-button @click="handleFetchResourcesQrcode(scope.row)" type="text" size="small">二维码</el-button>
           <el-button type="text" size="small">编辑</el-button>
         </template>
       </el-table-column>
@@ -150,7 +150,7 @@
         >
         <el-upload
           class="upload-demo"
-          action="http://lumen.test/resources/upload"
+          action="http://api.zhangguoheng.cn/resources/upload"
           :on-preview="handlePreview"
           :on-remove="handleRemove"
           :on-success="handleSuccess"
@@ -191,7 +191,8 @@ export default {
     return {
       list: null,
       listLoading: true,
-      httpUrl: "http://lumen.test/",
+      httpUrl: "http://api.zhangguoheng.cn/",
+      // httpUrl: "http://lumen.test/",
       form: {
         name: "",
         desc: "",
@@ -260,7 +261,8 @@ export default {
         url: item.url
       }
       fetchResourcesQrcode(data).then(res => {
-        this.qrcodeUrl = 'http://lumen.test/' + res.qrcode
+        console.log(res.qrcode);
+        this.qrcodeUrl = this.httpUrl + res.qrcode.slice(2, 16);
         console.log(this.qrcodeUrl);
       })
     }
