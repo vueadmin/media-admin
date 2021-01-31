@@ -257,7 +257,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="二维码"
+      :title="title"
       :visible.sync="dialogVisible"
       width="50%">
       <el-image :src="qrcodeUrl"></el-image>
@@ -271,6 +271,7 @@ import { fetchResources, createResources, updateResources, deleteResources, fetc
 export default {
   data() {
     return {
+      title: '二维码',
       list: null,
       listLoading: true,
       httpUrl: "http://api.zhangguoheng.cn/",
@@ -338,6 +339,7 @@ export default {
       })
     },
     handleFetchResourcesQrcode(item) {
+      this.title = item.name + '/' + item.singer + '/' + item.author + '/' + item.type;
       this.dialogVisible = true;
       let data = {
         name: item.index_id,
