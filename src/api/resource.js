@@ -8,6 +8,22 @@ export function createResources(data) {
   });
 }
 
+export function updateResources(data) {
+  return request({
+    url: "/resources/edit",
+    method: "post",
+    data
+  });
+}
+
+export function deleteResources(data) {
+  return request({
+    url: "/resources/del",
+    method: "post",
+    data
+  });
+}
+
 export function fetchResources() {
   return request({
     url: "/resources/index",

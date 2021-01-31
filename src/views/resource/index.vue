@@ -68,10 +68,11 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="120">
+        width="280">
         <template slot-scope="scope">
-          <el-button @click="handleFetchResourcesQrcode(scope.row)" type="text" size="small">二维码</el-button>
-          <el-button type="text" size="small">编辑</el-button>
+          <el-button @click="handleFetchResourcesQrcode(scope.row)" type="primary" size="mini">二维码</el-button>
+          <el-button @click="hanleFecthUpdate(scope.row)" type="primary" size="mini">编辑</el-button>
+          <el-button @click="handleFecthDelete(scope.row)" type="danger" size="mini">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -175,6 +176,87 @@
       </div>
     </el-dialog>
     <el-dialog
+      title="编辑资源"
+      :visible.sync="dialogFormVisibleUpdate"
+    >
+      <el-form :model="form">
+        <el-form-item
+          label="资源名称"
+          :label-width="formLabelWidth"
+        >
+          <el-input
+            v-model="form.name"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="资源简介"
+          :label-width="formLabelWidth"
+        >
+          <el-input
+            v-model="form.desc"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="资源地址"
+          :label-width="formLabelWidth"
+        >
+          <el-input
+            disabled
+            v-model="form.url"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="演唱者"
+          :label-width="formLabelWidth"
+        >
+          <el-input
+            v-model="form.singer"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="作者"
+          :label-width="formLabelWidth"
+        >
+          <el-input
+            v-model="form.author"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="资源类型"
+          :label-width="formLabelWidth"
+        >
+          <el-select
+            v-model="form.type"
+            placeholder="请选择活动区域"
+          >
+            <el-option
+              label="音频"
+              value="mp3"
+            ></el-option>
+            <el-option
+              label="视频"
+              value="mp4"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogFormVisibleUpdate = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="hanldeUpdateResources"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
       title="二维码"
       :visible.sync="dialogVisible"
       width="50%">
@@ -184,7 +266,7 @@
 </template>
 
 <script>
-import { fetchResources, createResources, fetchResourcesQrcode } from "@/api/resource";
+import { fetchResources, createResources, updateResources, deleteResources, fetchResourcesQrcode } from "@/api/resource";
 
 export default {
   data() {
@@ -203,6 +285,7 @@ export default {
       },
       formLabelWidth: "120px",
       dialogFormVisible: false,
+      dialogFormVisibleUpdate: false,
       dialogVisible: false,
       qrcodeUrl: '',
       fileList: []
@@ -264,6 +347,40 @@ export default {
         console.log(res.qrcode);
         this.qrcodeUrl = this.httpUrl + res.qrcode.slice(2, 16);
         console.log(this.qrcodeUrl);
+      })
+    },
+    // 编辑资源
+    hanleFecthUpdate(item) {
+      this.dialogFormVisibleUpdate = true;
+      this.form = item;
+    },
+
+    handleFecthDelete(item) {
+       this.$confirm('此操作将永久删除该资源, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteResources(item).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.fetchData();
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+    },
+    // 上传编辑后的资源信息
+    hanldeUpdateResources() {
+      updateResources(this.form).then(res => {
+        this.dialogFormVisibleUpdate = false;
+        this.fetchData();
       })
     }
   },
